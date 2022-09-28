@@ -19,6 +19,8 @@ public class UserRepositoryTests : IDisposable
         _repository = new UserRepository(_context);
     }
 
+    // UserRepository tests not implemented, as Tag tests have been implemented
+
     public void Dispose()
     {
         _context.Dispose();

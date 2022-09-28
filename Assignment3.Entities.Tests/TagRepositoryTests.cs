@@ -14,6 +14,7 @@ public sealed class TagRepositoryTests : IDisposable
         var context = new KanbanContext(builder.Options);
         context.Database.EnsureCreated();
         context.Tags.AddRange(new Tag("High priority") { Id = 1 }, new Tag("Low priority") { Id = 2 });
+        context.Tasks.Add(new Task("Baking cake") {Id = 1});
         context.SaveChanges();
 
         _context = context;
@@ -28,6 +29,31 @@ public sealed class TagRepositoryTests : IDisposable
 
     [Fact]
     public void Find_given_non_exisiting_Id_should_return_null() => _context.Tags.Find(3).Should().Be(null);
+
+    [Fact]
+    public void Delete_given_tag_in_use_returns_Conflict() 
+    {
+        var task = _context.Tasks.Find(1)!;
+        task.Tags = new HashSet<Tag>(){_context.Tags.Find(1)!};
+
+        var response = _repository.Delete(1);
+
+        response.Should().Be(Conflict);
+    }
+
+    [Fact]
+    public void Delete_given_tag_in_use_with_force_flag_returns_Deleted()
+    {
+        var task = _context.Tasks.Find(1)!;
+        task.Tags = new HashSet<Tag>(){_context.Tags.Find(1)!};
+
+        var response = _repository.Delete(1, true);
+
+        response.Should().Be(Conflict);
+    }
+
+    [Fact]
+    public void Create_given_already_exisiting_tag_returns_Conflict() => _repository.Create(new TagCreateDTO("High priority")).Should().Be((Conflict, 1));
 
     public void Dispose()
     {
