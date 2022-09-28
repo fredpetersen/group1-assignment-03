@@ -10,8 +10,14 @@ public class KanbanContext : DbContext
         }
 
         public virtual DbSet<Tag> Tags => Set<Tag>();
-        
         public virtual DbSet<Task> Tasks => Set<Task>();
-
         public virtual DbSet<User> Users => Set<User>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Task>(entity => 
+            {
+                entity.Property(e => e.state).HasConversion<String>();
+            });
+        }
 }
