@@ -17,7 +17,7 @@ public class KanbanContext : DbContext
         {
             modelBuilder.Entity<Task>(entity => 
             {
-                entity.Property(e => e.state).HasConversion<String>();
+                entity.Property(e => e.State).HasConversion<String>();
             });
         }
 }

@@ -2,16 +2,27 @@ namespace Assignment3.Entities;
 
 public class Task
 {
-    public virtual int id {get; init;}
+    public virtual int Id {get; set;}
     
+    [Required]
     [StringLength(100)]
-    public virtual string title {get; set;}
+    public virtual string Title {get; set;}
 
-    public virtual User? assignedTo {get; set;}
+    public virtual User? AssignedTo {get; set;}
 
-    public virtual string? description {get; set;}
+    public virtual string? Description {get; set;}
+    [Required]
+    public virtual State State {get; set;}
 
-    public virtual State state {get; set;}
+    public virtual ICollection<Tag> Tags {get; set;}
 
-    public virtual Tag[] tags {get; set;}
+    public virtual DateTime Created {get; set;}
+
+    public virtual DateTime StateUpdated {get; set;}
+
+    public Task(string title)
+    {
+        Title = title;
+        Tags = new HashSet<Tag>();
+    }
 }
