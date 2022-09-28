@@ -15,6 +15,7 @@ public class TaskRepositoryTests : IDisposable
         var context = new KanbanContext(builder.Options);
         context.Database.EnsureCreated();
         context.Tasks.AddRange(new Task("Clean dishes") { Id = 1 }, new Task("do BDSA assignment") { Id = 2 });
+        context.Users.Add(new User("Sven","sven@svensker.se") {Id = 1});
         context.SaveChanges();
 
         _context = context;
@@ -80,8 +81,9 @@ public class TaskRepositoryTests : IDisposable
         var obj = _context.Tasks.Find(1)!;
         obj.StateUpdated = DateTime.UtcNow.AddSeconds(-10);
         
-        _repository.Update(new TaskUpdateDTO(1, "Clean dishes", null, null, new HashSet<string>(), Removed));
+        var response = _repository.Update(new TaskUpdateDTO(1, "Clean dishes", null, null, new HashSet<string>(), Closed));
 
+        response.Should().Be(Updated);
         obj.StateUpdated.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 
